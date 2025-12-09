@@ -1,28 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login Success</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In to Dashboard</title>
 </head>
-<body>
-    <h3>Authentication Successful!</h3>
-    <p>Redirecting you back to the app...</p>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+
+    <h2>Welcome to My Website</h2>
+    <p>Please sign in to continue to the app.</p>
+
+    <div id="buttonDiv"></div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <script>
-        // Simulate getting the token from your backend logic
-        const userToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
+        // 3. The function called automatically by Google after a successful login
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
 
-        // The Custom URL Scheme for your Flutter app
-        // Format: scheme://host?param=value
-        const appSchemeUrl = `myapp://auth-callback?token=${userToken}`;
+            // 'response.credential' is the Google JWT (ID Token).
+            // In a real production app, you would send this to YOUR backend here
+            // via fetch(), get a session token back, and then send THAT token.
+            
+            // For this demo, we send the Google ID Token directly to Flutter.
+            const token = response.credential;
+            
+            redirectToFlutter(token);
+        }
 
-        // 1. Try to redirect immediately
-        window.location.href = appSchemeUrl;
+        function redirectToFlutter(token) {
+            // The custom scheme matches the one in your AndroidManifest/Info.plist
+            const deepLink = `myapp://auth-callback?token=${token}`;
+            
+            // Redirect the browser to open the app
+            window.location.href = deepLink;
+            
+            // Optional UI feedback
+            document.body.innerHTML = `
+                <h3>Login Successful!</h3>
+                <p>Redirecting you back to the app...</p>
+                <a href="${deepLink}">Click here if nothing happens</a>
+            `;
+        }
 
-        // 2. Fallback: If app doesn't open (user is on desktop?), show a manual link
-        setTimeout(function() {
-            document.body.innerHTML += 
-                `<br><a href="${appSchemeUrl}">Click here if the app didn't open</a>`;
-        }, 1000);
+        // 4. Initialize the Google Client
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "255314012148-79edlhfc72vo1evippr0cgf7bki564ti.apps.googleusercontent.com", // REPLACE THIS
+                callback: handleCredentialResponse
+            });
+            
+            // Render the button
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  // Customization attributes
+            );
+            
+            // Optional: prompt automatically without clicking
+            // google.accounts.id.prompt(); 
+        }
     </script>
 </body>
 </html>
