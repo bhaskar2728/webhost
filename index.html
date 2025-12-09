@@ -1,36 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sign-In Bridge</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
-        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background-color: #4285F4; color: white; border: none; border-radius: 5px; }
-    </style>
+    <title>Login Success</title>
 </head>
 <body>
-
-    <h2>Login Page</h2>
-    <p>Click below to simulate a successful Google Login.</p>
-    
-    <button onclick="handleLoginSuccess()">Simulate Google Login Success</button>
+    <h3>Authentication Successful!</h3>
+    <p>Redirecting you back to the app...</p>
 
     <script>
-        function handleLoginSuccess() {
-            // 1. In a real scenario, you get this token from Google's API response
-            const mockToken = "ya29.a0AfB_byIBP..."; 
+        // Simulate getting the token from your backend logic
+        const userToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
 
-            // 2. Define your Custom URL Scheme (MUST match AndroidManifest/Info.plist)
-            // Format: scheme://host?param=value
-            const callbackUrl = `mytestapp://auth_callback?token=${mockToken}`;
+        // The Custom URL Scheme for your Flutter app
+        // Format: scheme://host?param=value
+        const appSchemeUrl = `myapp://auth-callback?token=${userToken}`;
 
-            console.log("Redirecting to: " + callbackUrl);
+        // 1. Try to redirect immediately
+        window.location.href = appSchemeUrl;
 
-            // 3. Redirect the browser. 
-            // On Mobile: This closes the browser and opens your app.
-            window.location.href = callbackUrl;
-        }
+        // 2. Fallback: If app doesn't open (user is on desktop?), show a manual link
+        setTimeout(function() {
+            document.body.innerHTML += 
+                `<br><a href="${appSchemeUrl}">Click here if the app didn't open</a>`;
+        }, 1000);
     </script>
 </body>
 </html>
