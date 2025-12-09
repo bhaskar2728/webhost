@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign-In Bridge</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background-color: #4285F4; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Login Page</h2>
+    <p>Click below to simulate a successful Google Login.</p>
+    
+    <button onclick="handleLoginSuccess()">Simulate Google Login Success</button>
+
+    <script>
+        function handleLoginSuccess() {
+            // 1. In a real scenario, you get this token from Google's API response
+            const mockToken = "ya29.a0AfB_byIBP..."; 
+
+            // 2. Define your Custom URL Scheme (MUST match AndroidManifest/Info.plist)
+            // Format: scheme://host?param=value
+            const callbackUrl = `mytestapp://auth_callback?token=${mockToken}`;
+
+            console.log("Redirecting to: " + callbackUrl);
+
+            // 3. Redirect the browser. 
+            // On Mobile: This closes the browser and opens your app.
+            window.location.href = callbackUrl;
+        }
+    </script>
+</body>
+</html>
