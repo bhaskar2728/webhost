@@ -2,47 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login Page</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In to Dashboard</title>
 </head>
-<body style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: sans-serif;">
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
 
-    <h2>My Web App</h2>
-    
-    <div id="g_id_onload"
-         data-client_id="255314012148-79edlhfc72vo1evippr0cgf7bki564ti.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
-    </div>
-    <div class="g_id_signin" data-type="standard"></div>
+    <h2>Welcome to My Website</h2>
+    <p>Please sign in to continue to the app.</p>
 
-    <button onclick="simulateLogin()" style="margin-top: 50px; padding: 10px 20px; background: #333; color: white;">
-        Simulate Login (For Testing)
-    </button>
+    <div id="buttonDiv"></div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <script>
+        // 3. The function called automatically by Google after a successful login
         function handleCredentialResponse(response) {
-            // 1. Get the token from Google
+            console.log("Encoded JWT ID token: " + response.credential);
+
+            // 'response.credential' is the Google JWT (ID Token).
+            // In a real production app, you would send this to YOUR backend here
+            // via fetch(), get a session token back, and then send THAT token.
+            
+            // For this demo, we send the Google ID Token directly to Flutter.
             const token = response.credential;
-            finalizeLogin(token);
+            
+            redirectToFlutter(token);
         }
 
-        function simulateLogin() {
-            // Create a fake token for testing logic
-            const fakeToken = "mock_token_" + new Date().getTime();
-            finalizeLogin(fakeToken);
-        }
+        function redirectToFlutter(token) {
+            console.log("Token Retrieved:");
 
-        function finalizeLogin(token) {
-            console.log("Login Success. Token:", token);
-
-            // 2. STORE THE TOKEN (Where Flutter will find it)
-            // Common places: localStorage, sessionStorage, or Cookies.
             localStorage.setItem("auth_token", token);
 
             // 3. REDIRECT to the Dashboard
             // This matches the scenario: The website just goes to its own home page.
-            window.location.href = "dashboard.html"; 
+            window.location.href = "dashboard.html";
+            // // The custom scheme matches the one in your AndroidManifest/Info.plist
+            // const deepLink = `myapp://auth-callback?token=${token}`;
+            
+            // // Redirect the browser to open the app
+            // window.location.href = deepLink;
+            
+            // Optional UI feedback
+            document.body.innerHTML = `
+                <h3>Login Successful!</h3>
+                <p>Redirecting you back to the app...</p>
+                <a href="${deepLink}">Click here if nothing happens</a>
+            `;
+        }
+
+        // 4. Initialize the Google Client
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "255314012148-79edlhfc72vo1evippr0cgf7bki564ti.apps.googleusercontent.com", // REPLACE THIS
+                callback: handleCredentialResponse
+            });
+            
+            // Render the button
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  // Customization attributes
+            );
+            
+            // Optional: prompt automatically without clicking
+            // google.accounts.id.prompt(); 
         }
     </script>
 </body>
