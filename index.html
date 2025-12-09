@@ -30,18 +30,11 @@
         }
 
         function redirectToFlutter(token) {
-            console.log("Token Retrieved:");
-
-            localStorage.setItem("auth_token", token);
-
-            // 3. REDIRECT to the Dashboard
-            // This matches the scenario: The website just goes to its own home page.
-            window.location.href = "dashboard.html";
-            // // The custom scheme matches the one in your AndroidManifest/Info.plist
-            // const deepLink = `myapp://auth-callback?token=${token}`;
+            // The custom scheme matches the one in your AndroidManifest/Info.plist
+            const deepLink = `mytestapp://auth_callback?token=${token}`;
             
-            // // Redirect the browser to open the app
-            // window.location.href = deepLink;
+            // Redirect the browser to open the app
+            window.location.href = deepLink;
             
             // Optional UI feedback
             document.body.innerHTML = `
