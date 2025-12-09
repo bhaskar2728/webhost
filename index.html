@@ -31,7 +31,7 @@
 
         function redirectToFlutter(token) {
             // The custom scheme matches the one in your AndroidManifest/Info.plist
-            const deepLink = `myapp://auth-callback?token=${token}`;
+            const deepLink = `mytestapp://auth_callback?token=${token}`;
             
             // Redirect the browser to open the app
             window.location.href = deepLink;
